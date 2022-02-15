@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "Report Builder for building reports based on looker data",
   "main": "src/index.js",
+  "bin": {
+    "report-builder": "./src/index.js"
+  },
   "publishConfig": {
     "access": "public"
   },
+  "preferGlobal": true,
   "scripts": {
     "test": "nyc node_modules/mocha/bin/mocha test/*.test.js",
     "release": "np"
@@ -29,7 +33,9 @@
     "@service-unit-469/looker-downloader": "^1.0.0",
     "csv-parse": "^5.0.4",
     "csv-writer": "^1.6.0",
+    "filtrex": "^2.2.3",
     "winston": "^3.5.1",
+    "yaml": "^1.10.2",
     "yargs": "^17.3.1"
   },
   "devDependencies": {

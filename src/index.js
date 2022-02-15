@@ -1,8 +1,12 @@
+#!/usr/bin/env node
+
 const converter = require("./converter");
+const filter = require("./filter");
 const fs = require("fs");
 const LookerDownload = require("@service-unit-469/looker-downloader");
 const merge = require("./merge");
 const path = require("path");
+const YAML = require("yaml");
 
 function getLog(argv) {
   return require("./log")(argv.debug ? "silly" : "info");
@@ -20,7 +24,7 @@ module.exports.convert = convert;
 function mergecmd(argv) {
   const log = getLog(argv);
   const { input, output, mapping, pretty } = argv;
-  log.info(`Mapping ${input} to ${output} usng: ${mapping}`);
+  log.info(`Mapping ${input} to ${output} using: ${mapping}`);
 
   if (!fs.existsSync(input)) {
     throw new Error(`Input file not found!`);
@@ -44,6 +48,31 @@ function mergecmd(argv) {
   log.info("File merged successfully!");
 }
 module.exports.mergecmd = mergecmd;
+
+function filtercmd(argv) {
+  const log = getLog(argv);
+  const { input, output, pretty } = argv;
+
+  log.info(`Filtering ${input} to ${output} with expression: ${argv.filter}`);
+
+  if (!fs.existsSync(input)) {
+    throw new Error(`Input file not found!`);
+  }
+  const records = JSON.parse(fs.readFileSync(input));
+  const filtered = filter(records, argv.filter);
+
+  if (output === "text") {
+    log.info(`Result: \n\n${YAML.stringify(filtered)}`);
+  } else {
+    if (pretty) {
+      fs.writeFileSync(output, JSON.stringify(filtered, null, 2));
+    } else {
+      fs.writeFileSync(output, JSON.stringify(filtered));
+    }
+  }
+  log.info("File filtered successfully!");
+}
+module.exports.filtercmd = filtercmd;
 
 require("yargs")
   .scriptName("report-builder")
@@ -168,4 +197,38 @@ require("yargs")
     },
     mergecmd
   )
+  .command(
+    "filter",
+    "Filters an array of records based on expressions",
+    (yargs) => {
+      yargs.options({
+        input: {
+          alias: "i",
+          describe: "the input file",
+          type: "string",
+          demandOption: true,
+        },
+        output: {
+          alias: "o",
+          describe: "the output file (or 'text' to write to the console)",
+          type: "string",
+          default: "text",
+        },
+        filter: {
+          alias: "f",
+          describe: "the filter to execute",
+          type: "string",
+          demandOption: true,
+        },
+        pretty: {
+          alias: "p",
+          describe: "pretty print the output",
+          type: "boolean",
+          default: false,
+        },
+      });
+    },
+    filtercmd
+  )
+  .demandCommand(1, "You must specify a command")
   .help().argv;
