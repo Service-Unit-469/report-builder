@@ -1,0 +1,55 @@
+{
+  "primaryKey": "Email",
+  "primarySources": ["Preferred Contact Email", "Email"],
+  "replacements": [
+    {
+      "field": "Email",
+      "find": "@fuse.nete",
+      "replace": "@fuse.net"
+    }
+  ],
+  "fieldRules": {
+    "Role Name": {
+      "mapper": "unique",
+      "key": "Position"
+    },
+    "Troop/Group": {
+      "mapper": "unique",
+      "key": "Troop"
+    },
+    "Email": {
+      "mapper": "first",
+      "key": "Email"
+    },
+    "Phone Number": {
+      "mapper": "first",
+      "key": "Phone"
+    },
+    "Preferred Contact First Name": {
+      "adultField": "First Name",
+      "mapper": "first",
+      "key": "FirstName"
+    },
+    "Preferred Contact Last Name": {
+      "adultField": "Last Name",
+      "mapper": "first",
+      "key": "LastName"
+    },
+    "Does member allow email?": {
+      "mapper": "anyY",
+      "key": "AllowEmail"
+    },
+    "Role Assignment Start Date": {
+      "mapper": "highest",
+      "key": "CRMLastMod"
+    },
+    "Status": {
+      "mapper": "first",
+      "key": "Status"
+    },
+    "Expiration Date": {
+      "mapper": "lowest",
+      "key": "ExpirationDate"
+    }
+  }
+}
