@@ -1,7 +1,7 @@
 {
-  "name": "report-builder",
+  "name": "@service-unit-469/report-builder",
   "version": "0.0.1-SNAPSHOT",
-  "description": "",
+  "description": "Report Builder for building reports based on looker data",
   "main": "src/index.js",
   "publishConfig": {
     "access": "public"
@@ -19,7 +19,7 @@
     "Looker",
     "Business Intelligence"
   ],
-  "author": "Dan Klco",
+  "author": "Dan Klco <daniel.klco@gmail.com>",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/Service-Unit-469/report-builder/issues"
