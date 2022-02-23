@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const converter = require("./converter");
-const filter = require("./filter");
+const { filter } = require("./filter");
 const fs = require("fs");
 const LookerDownload = require("@service-unit-469/looker-downloader");
 const merge = require("./merge");
