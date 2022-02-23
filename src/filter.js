@@ -9,13 +9,13 @@ const { compileExpression } = require("filtrex");
  * @param {string} filter the filter expression
  * @returns the filtered records
  */
-module.exports = function (records, filter) {
+function filterFn(records, filter) {
   const filterfn = compileExpression(filter);
   const toFilter = [];
   records.forEach((original) => {
     const safe = {};
     Object.keys(original).forEach((key) => {
-      safe[key.replace(/[ \/\(\)\.]/g, "_")] = original[key];
+      safe[escapeKey(key)] = original[key];
     });
     toFilter.push({
       safe,
@@ -23,4 +23,13 @@ module.exports = function (records, filter) {
     });
   });
   return toFilter.filter((f) => filterfn(f.safe)).map((f) => f.original);
+}
+
+function escapeKey(key) {
+  return key.replace(/[\W]+/g, "_");
+}
+
+module.exports = {
+  escapeKey: escapeKey,
+  filter: filterFn,
 };
