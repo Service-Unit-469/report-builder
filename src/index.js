@@ -177,11 +177,11 @@ require("yargs")
           alias: "c",
           demandOption: true,
           describe:
-            "the configuration JSON file. This should be in the form of: Array<{destination: string, reportId: number, filter: Array<{name: string, value: string}>}>",
+            "the configuration JSON file. The file should be in the form of: Array<{destination: string, reportId: number, filter: Array<{name: string, value: string}>}>",
           type: "string",
         },
         headful: {
-          describe:~
+          describe:
             "launch browser in headful mode instead of headless (useful for debugging issues)",
           type: "boolean",
           default: false,
