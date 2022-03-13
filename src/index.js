@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+const assert = require("assert");
 const converter = require("./converter");
 const { filter } = require("./filter");
 const fs = require("fs");
@@ -115,6 +116,13 @@ require("yargs")
           type: "string",
           default: "report.csv",
         },
+        filter: {
+          alias: "f",
+          describe:
+            "the filter for the report, should be in the form of: Array<{name: string, value: string}>",
+          type: "string",
+          default: "{}",
+        },
         report: {
           alias: "r",
           describe: "the looker report id to run",
@@ -138,8 +146,80 @@ require("yargs")
         !argv.headful,
         log
       );
+
       await downloader.startup();
-      await downloader.downloadReport(argv.report, argv.destination);
+      await downloader.downloadReport(
+        argv.report,
+        JSON.parse(argv.filter || {}),
+        argv.destination
+      );
+      await downloader.shutdown();
+    }
+  )
+  .command(
+    "download-reports",
+    "Downloads a list of reports",
+    (yargs) => {
+      yargs.options({
+        user: {
+          alias: "u",
+          demandOption: true,
+          describe: "your looker username",
+          type: "string",
+        },
+        password: {
+          alias: "p",
+          demandOption: true,
+          describe: "your looker password",
+          type: "string",
+        },
+        config: {
+          alias: "c",
+          demandOption: true,
+          describe:
+            "the configuration JSON file. This should be in the form of: Array<{destination: string, reportId: number, filter: Array<{name: string, value: string}>}>",
+          type: "string",
+        },
+        headful: {
+          describe:~
+            "launch browser in headful mode instead of headless (useful for debugging issues)",
+          type: "boolean",
+          default: false,
+        },
+      });
+    },
+    async function (argv) {
+      const log = getLog(argv);
+      const downloader = new LookerDownload(
+        "https://girlscouts.looker.com",
+        argv.user,
+        argv.password,
+        !argv.headful,
+        log
+      );
+      assert(
+        fs.existsSync(argv.config),
+        `Configuration file does not exist: ${JSON.stringify(argv.config)}`
+      );
+      const configs = JSON.parse(fs.readFileSync(argv.config));
+
+      await downloader.startup();
+      for (const config of configs) {
+        assert(
+          config.reportId,
+          `Missing report id from configuration: ${JSON.stringify(config)}`
+        );
+        assert(
+          config.destination,
+          `Missing destination from configuration: ${JSON.stringify(config)}`
+        );
+        await downloader.downloadReport(
+          config.reportId,
+          config.filter || {},
+          config.destination
+        );
+      }
+
       await downloader.shutdown();
     }
   )
