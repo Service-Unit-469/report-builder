@@ -1,6 +1,6 @@
 {
   "name": "@service-unit-469/report-builder",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Report Builder for building reports based on looker data",
   "main": "src/index.js",
   "bin": {
