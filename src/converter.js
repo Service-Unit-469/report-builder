@@ -31,18 +31,20 @@ module.exports = function (input = "report.csv", output = "report.json") {
   if (output.toLowerCase().endsWith("json")) {
     fs.writeFileSync(output, JSON.stringify(data, null, 2));
   } else if (output.toLowerCase().endsWith("csv")) {
-    const stringifier = csvStringifier({
-      header: Object.keys(data[0]).map((k) => {
-        return {
-          id: k,
-          title: k,
-        };
-      }),
-    });
-    fs.writeFileSync(
-      output,
-      stringifier.getHeaderString() + stringifier.stringifyRecords(data)
-    );
+    let csvData = "";
+    if (data.length !== 0) {
+      const stringifier = csvStringifier({
+        header: Object.keys(data[0] || {}).map((k) => {
+          return {
+            id: k,
+            title: k,
+          };
+        }),
+      });
+      csvData =
+        stringifier.getHeaderString() + stringifier.stringifyRecords(data);
+    }
+    fs.writeFileSync(output, csvData);
   } else {
     throw new Error(`Unsupported input file type: ${input}`);
   }

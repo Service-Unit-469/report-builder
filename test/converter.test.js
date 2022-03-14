@@ -64,4 +64,14 @@ describe("Converter - sad path tests", () => {
       });
     }).to.throw(Error);
   });
+  it("Empty output with empty JSON array", () => {
+    convert({
+      input: "./test/empty.json",
+      output: "./dist/empty.csv",
+    });
+
+    expect(fs.existsSync("./dist/empty.csv")).to.be.true;
+
+    expect(fs.readFileSync("./dist/empty.csv").toString()).to.equal("");
+  });
 });
